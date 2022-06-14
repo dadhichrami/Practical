@@ -97,8 +97,6 @@ class MainActivity : AppCompatActivity(), TextWatcher {
     }
 
     override fun afterTextChanged(s: Editable?) {
-        if (s!!.isNotEmpty()) {
-//            adapter.filter.filter(s.toString())
-        }
+        adapter.filter.filter(s.toString())
     }
 }

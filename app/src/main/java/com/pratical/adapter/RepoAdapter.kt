@@ -15,11 +15,11 @@ import com.pratical.model.RepoModel
 import java.util.*
 import kotlin.collections.ArrayList
 
-class RepoAdapter(val context: Context) : RecyclerView.Adapter<RepoAdapter.RepoView>() {
+class RepoAdapter(val context: Context) : RecyclerView.Adapter<RepoAdapter.RepoView>(), Filterable {
 
     private var listItem = ArrayList<RepoModel.Items>()
-    private var positionClick = -1
-//    private var filterListItem = ArrayList<RepoModel.Items>()
+    private var positionClick: RepoModel.Items? = null
+    private var filterListItem = ArrayList<RepoModel.Items>()
 
     inner class RepoView(val mBinding: RepoItemViewBinding) :
         RecyclerView.ViewHolder(mBinding.root), View.OnClickListener {
@@ -48,15 +48,14 @@ class RepoAdapter(val context: Context) : RecyclerView.Adapter<RepoAdapter.RepoV
         override fun onClick(p0: View?) {
             when (p0?.id) {
                 R.id.clParentView -> {
-                    if (positionClick != -1) {
-                        val data = listItem[positionClick]
-                        data.isSelect = false
+                    if (positionClick != null) {
+                        val data = filterListItem.indexOf(positionClick)
+                        filterListItem[data].isSelect = false
                     }
 
-                    val data = listItem[adapterPosition]
-                    data.isSelect = true
+                    filterListItem[adapterPosition].isSelect = true
 
-                    positionClick = adapterPosition
+                    positionClick = filterListItem[adapterPosition]
 
                     notifyDataSetChanged()
                 }
@@ -70,20 +69,20 @@ class RepoAdapter(val context: Context) : RecyclerView.Adapter<RepoAdapter.RepoV
     }
 
     override fun onBindViewHolder(holder: RepoView, position: Int) {
-        holder.setDataToView(listItem[position])
+        holder.setDataToView(filterListItem[position])
     }
 
     override fun getItemCount(): Int {
-        return listItem.size
+        return filterListItem.size
     }
 
     fun doRefresh(list: ArrayList<RepoModel.Items>) {
         listItem = list
-//        filterListItem = listItem
+        filterListItem = listItem
         notifyDataSetChanged()
     }
 
-   /* override fun getFilter(): Filter {
+    override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
@@ -111,5 +110,5 @@ class RepoAdapter(val context: Context) : RecyclerView.Adapter<RepoAdapter.RepoV
                 notifyDataSetChanged()
             }
         }
-    }*/
+    }
 }
